@@ -13,12 +13,14 @@ In this project, both of us explore our connections to each other using a custom
 
 CREATE (a:Person {name: 'Aayushi', age: 23, state: 'VA'})
 CREATE (k:Person {name: 'Kelsey', age: 26, state: 'MA'})
+CREATE (j:Person {name: 'Joseph', age: 32, state: 'MA'})
 
 CREATE (book1:Book {title: 'Mathematics for Machine Learning', author: 'Marc Deisenroth', year: 2020})
 CREATE (book2:Book {title: 'Artificial Intelligence: A Modern Approach', author: 'Stuart Russell', year: 2009})
 CREATE (book3:Book {title: 'Data Feminism', author: 'Catherine D\'Ignazio', year: 2020})
 CREATE (book4:Book {title: 'Harry Potter and the Philosopher\'s Stone', author: 'J. K. Rowling', year: 1997})
 CREATE (book5:Book {title: 'Harry Potter and the Chamber of Secrets', author: 'J. K. Rowling', year: 1998})
+CREATE (book6:Book {title: 'Riding the Lightning: A Year in the Life of a New York City Paramedic', author: 'Anthony Almojera', year: 2022})
 
 CREATE (movie1:Movie {title: 'Mission Impossible: Dead Reckoning Part One', director: 'Christopher McQuarrie,', year: 2023})
 CREATE (movie2:Movie {title: 'Spider-Man: No Way Home', director: 'Jon Watts', year: 2014})
@@ -39,6 +41,7 @@ CREATE (cs619:Class {name: 'Data Mining'})
 CREATE (cs677:Class {name: 'Machine Learning'})
 CREATE (cs676:Class {name: 'Algorithms for Data Science'})
 CREATE (cs627:Class {name: 'Artificial Intelligence'})
+CREATE (is680:Class {name: 'Introduction to Data Mining'})
 
 ================================================================================
 # RELATIONSHIP CREATION
@@ -52,6 +55,7 @@ CREATE (cs619)-[:isClassOf]->(university)
 CREATE (cs677)-[:isClassOf]->(university)
 CREATE (cs676)-[:isClassOf]->(university)
 CREATE (cs627)-[:isClassOf]->(university)
+CREATE (is680)-[:isClassOf]->(university)
 
 CREATE (a)-[:hasTaken]->(cs623)
 CREATE (a)-[:hasTaken]->(cs660)
@@ -70,12 +74,18 @@ CREATE (k)-[:hasTaken]->(cs619)
 CREATE (k)-[:hasTaken]->(cs677)
 CREATE (k)-[:hasTaken]->(cs676)
 CREATE (k)-[:hasTaken]->(cs661)
+CREATE (k)-[:hasTaken]->(is680)
+
 
 CREATE (cs660)-[:hasTextbook]->(book1)
 CREATE (cs627)-[:hasTextbook]->(book2)
 
 CREATE (a)-[:isFriendsWith]->(k)
 CREATE (k)-[:isFriendsWith]->(a)
+CREATE (k)-[:isFriendsWith]->(j)
+CREATE (j)-[:isFriendsWith]->(k)
+CREATE (j)-[:isFriendsWith]->(a)
+CREATE (a)-[:isFriendsWith]->(j)
 
 CREATE (a)-[:goesTo {degree: 'MS Data Science', start: 'May 2022', graduate: 'Dec 2023'}]->(university)
 CREATE (k)-[:goesTo {degree: 'MS Data Science', start: 'May 2022', graduate: 'Dec 2023'}]->(university)
@@ -86,6 +96,7 @@ CREATE (a)-[:hasRead]->(book4)
 CREATE (a)-[:hasRead]->(book5)
 CREATE (k)-[:hasRead]->(book3)
 CREATE (k)-[:hasRead]->(book2)
+CREATE (j)-[:hasRead]->(book6)
 
 CREATE (a)-[:hasWatched]->(movie1)
 CREATE (a)-[:hasWatched]->(movie2)
@@ -94,6 +105,7 @@ CREATE (a)-[:hasWatched]->(movie4)
 CREATE (a)-[:hasWatched]->(movie6)
 CREATE (a)-[:hasWatched]->(movie7)
 CREATE (k)-[:hasWatched]->(movie5)
+CREATE (j)-[:hasWatched]->(movie5)
 
 CREATE (movie6)-[:isBasedOn]->(book4)
 CREATE (movie7)-[:isBasedOn]->(book5)
@@ -126,6 +138,13 @@ RETURN b, m
 MATCH (a:Person {name: 'Aayushi'})-[:hasTaken]->(c:Class)
 WHERE NOT EXISTS {
   MATCH (k:Person {name: 'Kelsey'})-[:hasTaken]->(c)
+}
+RETURN c.name AS Class
+
+# now the other way around
+MATCH (k:Person {name: 'Kelsey'})-[:hasTaken]->(c:Class)
+WHERE NOT EXISTS {
+  MATCH (a:Person {name: 'Aayushi'})-[:hasTaken]->(c)
 }
 RETURN c.name AS Class
 
